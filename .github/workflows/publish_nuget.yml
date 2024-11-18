@@ -1,0 +1,43 @@
+name: Publish nuget
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup dotnet8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8'
+        
+      - name: Run actual tests
+        run: |
+          dotnet test ./Picorm.MySql.csproj
+
+  build:
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup dotnet8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8'
+
+      - name: Pack
+        run: |
+          dotnet pack ./Picorm.MySql.csproj -o ./package
+
+      - name: Publish package to nuget
+        run: |
+          dotnet nuget push ./package/*.nupkg --api-key ${{ secrets.PICORM_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json

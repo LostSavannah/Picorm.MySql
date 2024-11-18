@@ -1,9 +1,4 @@
 ﻿using Picorm.Common;
-using Picorm.Common.Data;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
 
 namespace Picorm.MySql
 {
